@@ -1,18 +1,3 @@
-# import bcrypt
-
-# while(True):
-#     password = "Test123"
-#     password = password.encode('utf-8')
-#     hashed = bcrypt.hashpw(password, bcrypt.gensalt(10))
-#     print(hashed)
-
-
-#     check = input("Password: ")
-#     if bcrypt.checkpw(check.encode('utf-8'), hashed):
-#         print(True)
-#     else:
-#         print(False)
-
 import telnetlib
 import getpass
 import time
