@@ -16,6 +16,7 @@ def change_rip(telnet_ip_address, port, password=None):
     tn.write(b"\r\n")
     time.sleep(10)
     if password is not None:
+        tn.read_until(b"Password:")
         tn.write(password.encode('ascii') + b"\r\n")
     tn.write(b"config t\r")
     tn.write(b"router rip\r")
@@ -48,6 +49,7 @@ def change_ospf(telnet_ip_address, port, password=None):
     tn.write(b"\r\n")
     time.sleep(10)
     if password is not None:
+        tn.read_until(b"Password:")
         tn.write(password.encode('ascii') + b"\r\n")
     tn.write(b"config t\r")
     tn.write(b"router ospf 1\r")
@@ -71,34 +73,34 @@ def change_hostname(telnet_ip_address, port, new_hostname, password=None):
     print("Waiting for response...")
     time.sleep(10)
     if password is not None:
+        tn.read_until(b"Password:")
         tn.write(password.encode('ascii') + b"\r\n")
         print("Password entered")
     tn.write(b"config t\r")
     tn.write(f"hostname {new_hostname}\r".encode())
+    tn.write(b"exit\r")
     tn.write(b"wr mem\r")
     print("Building configuration...")
     time.sleep(10)
-    tn.write(b"exit\r")
     tn.write(b"quit\r")
     time.sleep(10)
     tn.write(b"\r\n")
     tn.close()
     print("Host name successfully changed.")
     
-    
-
-if __name__ == "__main__":
-    valid_choices = [1, 2, 3]
+def choice_message():
     print("Select number to do action:")
     print("1 -> Change Hostname")
     print("2 -> Change RIP IPs in a router")
+    print("3 -> Change OSPF IPs in a router")
+
+if __name__ == "__main__":
+    valid_choices = [1, 2, 3]
+    choice_message()
     
     choice = int(input("Choice: "))
     while choice not in valid_choices:
-        print("Choice not valid. Choose a valid choice.")
-        print("1 -> Change Hostname")
-        print("2 -> Change RIP IPs in a router")
-        print("3 -> Change OSPF IPs in a router")
+        choice_message()
         choice = int(input("Choice: "))
     
     telnet_ip_addr = input("IP Address for telnet: ")
@@ -107,8 +109,8 @@ if __name__ == "__main__":
     
     if choice == 1:
         new_hostname = input("New Host Name: ")
-        change_hostname(telnet_ip_address=telnet_ip_addr, port=port_select, new_hostname=new_hostname, password="cisco")
+        change_hostname(telnet_ip_address=telnet_ip_addr, port=port_select, new_hostname=new_hostname, password=password)
     elif choice == 2:
-        change_rip(telnet_ip_address=telnet_ip_addr, port=port_select, password="cisco")
+        change_rip(telnet_ip_address=telnet_ip_addr, port=port_select, password=password)
     elif choice == 3:
-        change_ospf(telnet_ip_address=telnet_ip_addr, port=port_select, password="cisco")
+        change_ospf(telnet_ip_address=telnet_ip_addr, port=port_select, password=password)
